@@ -93,8 +93,10 @@ const getAvgByScores = (LearnerSubmissions, AssignmentGroup) => {
   let testResult = [];
   const finalResult = [];
 
+  //forEach Loop
   LearnerSubmissions.forEach(element => {
     const existingItem = testResult.find(resultItem => resultItem.id === element.learner_id);
+
 
     // Find the corresponding assignment
     // connects AssignmentGroup.assignments.id === LearnerSubmissions,learner_id
@@ -105,11 +107,12 @@ const getAvgByScores = (LearnerSubmissions, AssignmentGroup) => {
 
     //console.log(assignments.due_at);
     let scoretoCalculate = element.submission.score;
-    //console.log(scoretoCalculate);
+
 
     if (overDue) {
       scoretoCalculate -= 15;
     }
+    //console.log(scoretoCalculate);
 
     if (existingItem) {
       //console.log(existingItem);
@@ -121,11 +124,11 @@ const getAvgByScores = (LearnerSubmissions, AssignmentGroup) => {
     }
   });
 
-  //Use the data that use pushed into the testResult and use it to calculate the average 
-  testResult.map(element => {
-    const avgScore = (element.score / element.totalScore);
-    finalResult.push({ id: element.id, avg: avgScore });
-  });
+  //For loop
+  for (let i = 0; i < testResult.length; i++) {
+    let avgScore = testResult[i].score / testResult[i].totalScore;
+    finalResult.push({ id: testResult[i].id, avg: avgScore });
+  }
 
   return finalResult;
 }
