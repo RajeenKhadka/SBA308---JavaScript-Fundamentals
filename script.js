@@ -81,37 +81,6 @@ const CourseInfo = {
 //     return result;
 // }
 
-
-//const summedScore = [];
-
-//const getSumByScores = (data) => {
-//   let sum = 0;
-
-//   const result = []
-
-//   data.forEach((element) => {
-
-//     if(result[element.learner_id]){
-     
-//       //console.log(element.learner_id);
-//       console.log(result[element.learner_id]);
-
-//       result[element.submission.score] += element.submission.score; 
-
-//     } else {
-//       result[element.submission.score] = element.submission.score
-//     }
-//   });
-//   return result;
-// };
-
-// const getSumScores = getSumByScores(LearnerSubmissions);
-
-// console.log(getSumScores);
-//console.log(LearnerSubmissions[1].submission.score);
-
-
-
 //const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
 //console.log(result);
 
@@ -136,3 +105,7 @@ const getSumByScores = (data) => {
 
 const getSum = getSumByScores(LearnerSubmissions);
 console.log(getSum);
+
+
+
+
