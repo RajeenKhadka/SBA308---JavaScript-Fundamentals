@@ -76,34 +76,31 @@ const LearnerSubmissions = [
   }
 ];
 
-//   function getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions) {
-
-//     return result;
-// }
-
-//const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
-//console.log(result);
+  
 
 const submissionDueDateCheck = (submissionDate, dueDate) => {
   return new Date(submissionDate) <= new Date(dueDate);
 };
 
-const getAvgByScores = (LearnerSubmissions, AssignmentGroup) => {
+const getAvgByScores = (learnerData, assignmentData) => {
 
   let testResult = [];
   const finalResult = [];
 
   //forEach Loop
-  LearnerSubmissions.forEach(element => {
-    const existingItem = testResult.find(resultItem => resultItem.id === element.learner_id);
+  learnerData.forEach(element => {
+
+    const existingItem = testResult.find(resultItem => resultItem.id === element.learner_id);  //
+    //console.log(existingItem);
 
 
     // Find the corresponding assignment
     // connects AssignmentGroup.assignments.id === LearnerSubmissions,learner_id
 
-    const assignments = AssignmentGroup.assignments.find(data => data.id === element.assignment_id);
+    const assignments = assignmentData.assignments.find(data => data.id === element.assignment_id);
+    //console.log(assignments);
 
-    const overDue = !submissionDueDateCheck(element.submission.submitted_at, assignments.due_at);
+    let overDue = !submissionDueDateCheck(element.submission.submitted_at, assignments.due_at);
 
     //console.log(assignments.due_at);
     let scoretoCalculate = element.submission.score;
@@ -122,20 +119,101 @@ const getAvgByScores = (LearnerSubmissions, AssignmentGroup) => {
     } else {
       testResult.push({ id: element.learner_id, score: element.submission.score, totalScore: assignments.points_possible });
     }
+    //console.log(testResult);
   });
 
   //For loop
   for (let i = 0; i < testResult.length; i++) {
-    let avgScore = testResult[i].score / testResult[i].totalScore;
+    let avgScore = (testResult[i].score / testResult[i].totalScore) * 100;
     finalResult.push({ id: testResult[i].id, avg: avgScore });
   }
 
   return finalResult;
+};
+
+
+//const getAvg = getAvgByScores(LearnerSubmissions, AssignmentGroup);
+//console.log(getAvg);
+
+
+const calculateIndividualScore = (learnerData, assignmentData) => {
+
+  let individualResult = [];
+  const duedItems = {};
+
+  const currentDate = new Date();
+
+  // This for loop iterates over the assignments inside the assignment data object.
+  // Stores the value of each assignment object then stores it's date in dueDate.
+  // Then the due date is compared with the current date
+  // If less than current the value is stored duedItems object along with the assignment ID as key.
+
+  for (let i = 0; i < assignmentData.assignments.length; i++) {
+    const assignment = assignmentData.assignments[i];
+    const dueDate = new Date(assignment.due_at);
+
+    //console.log(assignment);
+
+    //console.log(dueDate);
+
+    if (dueDate <= currentDate) {
+      duedItems[assignment.id] = assignment.points_possible;
+      
+    }
+    
+  }
+
+
+
+  // Loop through each submission
+  for (let i = 0; i < learnerData.length; i++) {
+    const submission = learnerData[i];
+    const pointsPossible = duedItems[submission.assignment_id];
+    //console.log(submission);
+    //console.log(submission.assignment_id);
+    //console.log(pointsPossible);
+
+
+    // Use of continue, this is a safety net when the value of possible points is undefined or 0.
+    // Continue skips over those conditions.
+    if (!pointsPossible) continue;
+
+    const existingID = individualResult.find(resultItem => resultItem.id === submission.learner_id);
+
+    const assignment = assignmentData.assignments.find(a => a.id === submission.assignment_id);
+
+    const dueDate = assignment.due_at;
+
+    // Check submission status
+    let overDue = !submissionDueDateCheck(submission.submission.submitted_at, dueDate);
+    let scoretoCalculate = submission.submission.score;
+
+    // Apply late penalty if the submission is late
+    if (overDue) {
+      scoretoCalculate -= 15;
+    }
+
+    if(existingID){
+      existingID[submission.assignment_id] = (scoretoCalculate / pointsPossible) * 100;
+      
+    } else{
+      let newEntry = { id: submission.learner_id, [submission.assignment_id]: (scoretoCalculate / pointsPossible) * 100 };
+      individualResult.push(newEntry); // Push new learner result
+    }
+  }
+
+  return individualResult;
+};
+
+
+function getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions) {
+
+  const getAvg = getAvgByScores(LearnerSubmissions, AssignmentGroup);
+  console.log(getAvg);
+
+  const individualScore = calculateIndividualScore(LearnerSubmissions, AssignmentGroup);
+  console.log(individualScore);
 }
 
-const getAvg = getAvgByScores(LearnerSubmissions, AssignmentGroup);
-console.log(getAvg);
-
-
-
-
+const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
+console.log(result);
