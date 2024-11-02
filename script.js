@@ -76,11 +76,16 @@ const LearnerSubmissions = [
   }
 ];
 
-  
+
+// =================================================================================================================================================================//
+
 
 const submissionDueDateCheck = (submissionDate, dueDate) => {
   return new Date(submissionDate) <= new Date(dueDate);
 };
+
+// =================================================================================================================================================================//
+
 
 const getAvgByScores = (learnerData, assignmentData) => {
 
@@ -132,8 +137,7 @@ const getAvgByScores = (learnerData, assignmentData) => {
 };
 
 
-//const getAvg = getAvgByScores(LearnerSubmissions, AssignmentGroup);
-//console.log(getAvg);
+// =================================================================================================================================================================//
 
 
 const calculateIndividualScore = (learnerData, assignmentData) => {
@@ -158,9 +162,9 @@ const calculateIndividualScore = (learnerData, assignmentData) => {
 
     if (dueDate <= currentDate) {
       duedItems[assignment.id] = assignment.points_possible;
-      
+
     }
-    
+
   }
 
 
@@ -193,10 +197,10 @@ const calculateIndividualScore = (learnerData, assignmentData) => {
       scoretoCalculate -= 15;
     }
 
-    if(existingID){
+    if (existingID) {
       existingID[submission.assignment_id] = (scoretoCalculate / pointsPossible) * 100;
-      
-    } else{
+
+    } else {
       let newEntry = { id: submission.learner_id, [submission.assignment_id]: (scoretoCalculate / pointsPossible) * 100 };
       individualResult.push(newEntry); // Push new learner result
     }
@@ -204,23 +208,35 @@ const calculateIndividualScore = (learnerData, assignmentData) => {
 
   return individualResult;
 };
- 
+
+
+// =================================================================================================================================================================//
+
 
 function getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions) {
 
-  const getAvg = getAvgByScores(LearnerSubmissions, AssignmentGroup);
-  //console.log(getAvg);
+  try {
+    if (CourseInfo.id !== 451) {
+      throw new Error("Enter the valid course.")
+    }
 
-  const individualScore = calculateIndividualScore(LearnerSubmissions, AssignmentGroup);
-  //console.log(individualScore);
+    const getAvg = getAvgByScores(LearnerSubmissions, AssignmentGroup);
+    //console.log(getAvg);
 
-  const finalData = individualScore.map(obj1 => {
-    const obj2 = getAvg.find(obj2 => obj2.id === obj1.id);
-    return { ...obj1, ...obj2};
-  });
+    const individualScore = calculateIndividualScore(LearnerSubmissions, AssignmentGroup);
+    //console.log(individualScore);
 
-  return finalData;
+    const finalData = individualScore.map(obj1 => {
+      const obj2 = getAvg.find(obj2 => obj2.id === obj1.id);
+      return { ...obj1, ...obj2 };
+    });
+
+    return finalData;
+  } catch (error) {
+    console.log("An error occured", error.message);
+    return [];
+  }
 }
 
-const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
-console.log(result);
+  const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
+  console.log(result);
