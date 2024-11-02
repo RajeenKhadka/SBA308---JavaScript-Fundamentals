@@ -33,6 +33,7 @@ const AssignmentGroup = {
 };
 
 // The provided learner submission data.
+
 const LearnerSubmissions = [
   {
     learner_id: 125,
@@ -107,7 +108,7 @@ const getAvgByScores = (learnerData, assignmentData) => {
 
     // Check submission status
     if (overDue) {
-      scoretoCalculate -= 15;
+      scoretoCalculate -= scoretoCalculate * 0.10;
     }
 
     if (existingItem) {
@@ -156,7 +157,6 @@ const calculateIndividualScore = (learnerData, assignmentData) => {
     const submission = learnerData[i];
     const pointsPossible = duedItems[submission.assignment_id];
 
-
     // Use of continue, this is a safety net when the value of possible points is undefined or 0.
     // Continue skips over those conditions.
     if (!pointsPossible) continue;
@@ -173,7 +173,7 @@ const calculateIndividualScore = (learnerData, assignmentData) => {
 
     // Apply late penalty if the submission is late
     if (overDue) {
-      scoretoCalculate -= 15;
+      scoretoCalculate -= scoretoCalculate * 0.10;
     }
 
     if (existingID) {
@@ -189,7 +189,7 @@ const calculateIndividualScore = (learnerData, assignmentData) => {
 };
 
 
-// =================================================================================================================================================================//
+//=================================================================================================================================================================//
 
 
 function getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions) {
@@ -209,10 +209,11 @@ function getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions) {
     });
     
     return finalData;
+
   } catch (error) {
 
     console.log("An error occured", error.message);
-    
+
   }
 }
 
