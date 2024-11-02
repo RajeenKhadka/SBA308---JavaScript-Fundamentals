@@ -204,15 +204,22 @@ const calculateIndividualScore = (learnerData, assignmentData) => {
 
   return individualResult;
 };
-
+ 
 
 function getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions) {
 
   const getAvg = getAvgByScores(LearnerSubmissions, AssignmentGroup);
-  console.log(getAvg);
+  //console.log(getAvg);
 
   const individualScore = calculateIndividualScore(LearnerSubmissions, AssignmentGroup);
-  console.log(individualScore);
+  //console.log(individualScore);
+
+  const finalData = individualScore.map(obj1 => {
+    const obj2 = getAvg.find(obj2 => obj2.id === obj1.id);
+    return { ...obj1, ...obj2};
+  });
+
+  return finalData;
 }
 
 const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
